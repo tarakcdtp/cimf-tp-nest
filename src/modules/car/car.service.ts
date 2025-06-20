@@ -1,51 +1,48 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CardtoDto } from './cardto.dto';
 import { Car } from './car.interface';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { CarEntity } from './car.entity';
 
 @Injectable()
 export class CarService {
-    private cars: Car[] = [];
-  private idSeq = 1;
+    
+  constructor(
+    @InjectRepository(CarEntity)
+    private readonly carRepository: Repository<CarEntity>,
+  ) {}
 
-  create(carDto: CardtoDto): Car {
-    const newCar: Car = { ...carDto, id: this.idSeq++ };
-    this.cars.push(newCar);
-    return newCar;
+  async create(carDto: CardtoDto): Promise<CarEntity> {
+    const newCar = this.carRepository.create(carDto);
+    return await this.carRepository.save(newCar);           
   }
 
-  findAll(): Car[] {
-    return this.cars;
+  async findAll(): Promise<CarEntity[]> {
+    return await this.carRepository.find();
   }
 
-  findById(id: number): Car {
-    const car = this.cars.find(c => c.id === id);
+  async findById(id: number): Promise<CarEntity> {
+    const car = await this.carRepository.findOneBy({ id });
     if (!car) throw new NotFoundException('Aucune voiture disponible !');
     return car;
   }
 
-  update(id: number, updateDto: CardtoDto): Car {
-    const carIndex = this.cars.findIndex(car => car.id === id);
-    if (carIndex === -1) throw new NotFoundException('Aucune voiture disponible !')
-
-    this.cars[carIndex] = { ...updateDto, id };
-    return this.cars[carIndex];
+  async update(id: number, updateDto: CardtoDto): Promise<CarEntity> {
+    const car = await this.findById(id);
+    Object.assign(car, updateDto);
+    return await this.carRepository.save(car);
   }
 
-
-  patch(id: number, updateDto: CardtoDto): Car {
-    const carIndex = this.cars.findIndex(car => car.id === id);
-    if (carIndex === -1) throw new NotFoundException('Aucune voiture disponible !')
-
-    this.cars[carIndex] = { ...this.cars[carIndex], ...updateDto };
-    return this.cars[carIndex];
+  async patch(id: number, updateDto: Partial<CardtoDto>): Promise<CarEntity> {
+    const car = await this.findById(id);
+    Object.assign(car, updateDto);
+    return await this.carRepository.save(car);
   }
 
-
-
-  delete(id: number): Car {
-    const carIndex = this.cars.findIndex(c => c.id === id);
-    if (carIndex === -1) throw new NotFoundException('Aucune voiture disponible !');
-    const [deleted] = this.cars.splice(carIndex, 1);
-    return deleted;
+  async delete(id: number): Promise<CarEntity> {
+    const car = await this.findById(id);
+    await this.carRepository.remove(car);
+    return car;
   }
 }
