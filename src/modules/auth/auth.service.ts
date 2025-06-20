@@ -4,6 +4,7 @@ import * as bcrypt from 'bcrypt';
 import { RegisterDto } from './register.dto';
 import { UserService } from '../user/user.service';
 import { LoginDto } from './login.dto';
+import { UserRole } from '../user/user.entity';
 
 @Injectable()
 export class AuthService {
@@ -22,7 +23,7 @@ export class AuthService {
       email: registerDto.email,
       password: hashedPassword,
     });
-    return this.signToken(user.id, user.email);
+    return this.signToken(user.id, user.email, user.role);
   }
 
   async signin(loginDto: LoginDto) {
@@ -30,11 +31,11 @@ export class AuthService {
     if (!user || !(await bcrypt.compare(loginDto.password, user.password))) {
       throw new UnauthorizedException('Invalid credentials');
     }
-    return this.signToken(user.id, user.email);
+    return this.signToken(user.id, user.email, user.role);
   }
 
-  private signToken(userId: number, email: string) {
-    const payload = { sub: userId, email };
+  private signToken(userId: number, email: string, role: UserRole) {
+    const payload = { sub: userId, email, role };
     return {
       access_token: this.jwtService.sign(payload),
     };
