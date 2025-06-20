@@ -1,7 +1,10 @@
-import { IsString, IsInt, IsIn } from 'class-validator';
+import { IsString, IsInt, IsIn, Matches } from 'class-validator';
 
 export class CardtoDto {
     @IsString()
+    @Matches(/^[a-zA-Z\s]+$/, {
+    message: 'brand can only contain letters and spaces',
+     })
     brand: string;
 
     @IsString()
