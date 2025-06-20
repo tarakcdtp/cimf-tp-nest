@@ -1,8 +1,9 @@
 import { Body, Controller, Delete, Get, NotFoundException, Param, ParseIntPipe, Patch, Post, Put } from '@nestjs/common';
+import { Car } from './car.interface';
 
 @Controller('car')
 export class CarController {
-    private cars: any[] = []; 
+    private cars: Car[] = []; 
     private idSeq: number = 1;
 
   @Get()
@@ -20,26 +21,26 @@ export class CarController {
   }
 
   @Post()
-  createCar(@Body() carData: any) {
-    const newCar = { id: this.idSeq, ...carData };
+  createCar(@Body() carData: Car) {
+    const newCar = { ...carData, id: this.idSeq };
     this.idSeq ++;
     this.cars.push(newCar);
     return newCar;
   }
 
   @Put(':id')
-  updateCar(@Param('id', ParseIntPipe) id: number, @Body() updateData: any) {
+  updateCar(@Param('id', ParseIntPipe) id: number, @Body() updateData: Car) {
     const carIndex = this.cars.findIndex(car => car.id === id);
-    if (carIndex === -1) return { message: 'Car not found' };
+    if (carIndex === -1) throw new NotFoundException('Aucune voiture disponible !')
 
-    this.cars[carIndex] = { id, ...updateData };
+    this.cars[carIndex] = { ...updateData, id };
     return this.cars[carIndex];
   }
 
   @Patch(':id')
-  patchCar(@Param('id', ParseIntPipe) id: number, @Body() updateData: any) {
+  patchCar(@Param('id', ParseIntPipe) id: number, @Body() updateData: Car) {
     const carIndex = this.cars.findIndex(car => car.id === id);
-    if (carIndex === -1) return { message: 'Car not found' };
+    if (carIndex === -1) throw new NotFoundException('Aucune voiture disponible !')
 
     this.cars[carIndex] = { ...this.cars[carIndex], ...updateData };
     return this.cars[carIndex];
@@ -48,7 +49,7 @@ export class CarController {
   @Delete(':id')
   deleteCar(@Param('id', ParseIntPipe) id: number) {
     const carIndex = this.cars.findIndex(car => car.id === id);
-    if (carIndex === -1) return { message: 'Car not found' };
+    if (carIndex === -1) throw new NotFoundException('Aucune voiture disponible !')
 
     const deleted = this.cars.splice(carIndex, 1);
     return { message: 'Deleted', car: deleted[0] };
