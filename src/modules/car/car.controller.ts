@@ -1,5 +1,6 @@
 import { Body, Controller, Delete, Get, NotFoundException, Param, ParseIntPipe, Patch, Post, Put } from '@nestjs/common';
 import { Car } from './car.interface';
+import { CardtoDto } from './cardto.dto';
 
 @Controller('car')
 export class CarController {
@@ -21,7 +22,7 @@ export class CarController {
   }
 
   @Post()
-  createCar(@Body() carData: Car) {
+  createCar(@Body() carData: CardtoDto) {
     const newCar = { ...carData, id: this.idSeq };
     this.idSeq ++;
     this.cars.push(newCar);
