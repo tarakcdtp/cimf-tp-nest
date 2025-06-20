@@ -1,4 +1,5 @@
-import { IsString, IsInt, IsIn, Matches } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsString, IsInt, IsIn, Matches, Max, Min } from 'class-validator';
 
 export class CardtoDto {
     @IsString()
@@ -10,7 +11,10 @@ export class CardtoDto {
     @IsString()
     model: string;
 
-    @IsInt()
+    @Type(() => Number)    // transforms input to number
+    @IsInt()              // validates it’s an integer
+    @Min(1900)            // minimum year allowed
+    @Max(new Date().getFullYear())  // max current year
     year: number;
 
     @IsIn(['red', 'blue', 'green'], {
