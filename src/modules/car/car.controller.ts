@@ -1,58 +1,40 @@
 import { Body, Controller, Delete, Get, NotFoundException, Param, ParseIntPipe, Patch, Post, Put } from '@nestjs/common';
 import { Car } from './car.interface';
 import { CardtoDto } from './cardto.dto';
+import { CarService } from './car.service';
 
 @Controller('car')
 export class CarController {
-    private cars: Car[] = []; 
-    private idSeq: number = 1;
+    
+  constructor(private readonly carService: CarService) {}
 
   @Get()
   getAllCars() {
-    return this.cars;
+    return this.carService.findAll();
   }
 
   @Get(':id')
   getCarById(@Param('id', ParseIntPipe) id: number) {
-    let car = this.cars.find(car => car.id === id);
-    if (!car) {
-        throw new NotFoundException('Aucune voiture disponible !')
-    }
-    return car;
+    return this.carService.findById(id);
   }
 
   @Post()
   createCar(@Body() carData: CardtoDto) {
-    const newCar = { ...carData, id: this.idSeq };
-    this.idSeq ++;
-    this.cars.push(newCar);
-    return newCar;
+    return this.carService.create(carData);
   }
 
   @Put(':id')
   updateCar(@Param('id', ParseIntPipe) id: number, @Body() updateData: Car) {
-    const carIndex = this.cars.findIndex(car => car.id === id);
-    if (carIndex === -1) throw new NotFoundException('Aucune voiture disponible !')
-
-    this.cars[carIndex] = { ...updateData, id };
-    return this.cars[carIndex];
+    return this.carService.update(id, updateData);
   }
 
   @Patch(':id')
   patchCar(@Param('id', ParseIntPipe) id: number, @Body() updateData: Car) {
-    const carIndex = this.cars.findIndex(car => car.id === id);
-    if (carIndex === -1) throw new NotFoundException('Aucune voiture disponible !')
-
-    this.cars[carIndex] = { ...this.cars[carIndex], ...updateData };
-    return this.cars[carIndex];
+    return this.carService.patch(id, updateData);
   }
 
   @Delete(':id')
   deleteCar(@Param('id', ParseIntPipe) id: number) {
-    const carIndex = this.cars.findIndex(car => car.id === id);
-    if (carIndex === -1) throw new NotFoundException('Aucune voiture disponible !')
-
-    const deleted = this.cars.splice(carIndex, 1);
-    return { message: 'Deleted', car: deleted[0] };
+    return this.carService.delete(id);
   }
 }
