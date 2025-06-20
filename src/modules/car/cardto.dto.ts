@@ -17,8 +17,6 @@ export class CardtoDto {
     @Max(new Date().getFullYear())  // max current year
     year: number;
 
-    @IsIn(['red', 'blue', 'green'], {
-    message: 'color must be one of the following values: red, blue, green',
-    })
+    @IsIn(['red', 'blue', 'green'])
     color: 'red' | 'blue' | 'green';
 }
