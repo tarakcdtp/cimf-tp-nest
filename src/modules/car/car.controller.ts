@@ -24,12 +24,12 @@ export class CarController {
   }
 
   @Put(':id')
-  updateCar(@Param('id', ParseIntPipe) id: number, @Body() updateData: Car) {
+  updateCar(@Param('id', ParseIntPipe) id: number, @Body() updateData: CardtoDto) {
     return this.carService.update(id, updateData);
   }
 
   @Patch(':id')
-  patchCar(@Param('id', ParseIntPipe) id: number, @Body() updateData: Car) {
+  patchCar(@Param('id', ParseIntPipe) id: number, @Body() updateData: CardtoDto) {
     return this.carService.patch(id, updateData);
   }
 
