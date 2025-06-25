@@ -1,0 +1,32 @@
+npm i bcrypt
+npm i passport-jwt
+npm i @nestjs/passport
+npm i @nestjs/jwt
+npm install -D @types/bcrypt
+
+
+npm install --save @nestjs/typeorm typeorm pg
+
+
+npm install class-validator class-transformer
+
+
+git clone https://github.com/tarakcdtp/cimf-tp-nest
+git branch -r
+git fetch all
+git checkout -b local_branch origin/remote_branch   exemple  : git checkout -b formation/1-crud origin/formation/1-crud
+simple basculement : git checkout local_branch
+
+git checkout -b feature/login
+git push -u 
+
+npm install
+
+
+npm install --save nest-winston winston
+
+
+
+docker login
+docker build -t mon-app-nestjs .
+docker run -d -p 3000:3000 --name mon-app-container mon-app-nestjs
