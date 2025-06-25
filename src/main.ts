@@ -6,6 +6,8 @@ import { NotFoundExceptionFilter } from './exceptions/notfound-filter.exception'
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   //app.useGlobalFilters(new NotFoundExceptionFilter());
+   const notFoundFilter = app.get(NotFoundExceptionFilter);
+   app.useGlobalFilters(notFoundFilter);
   app.useGlobalPipes(new ValidationPipe({
     transform: true,
     whitelist: true,          
