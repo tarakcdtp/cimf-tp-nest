@@ -1,8 +1,9 @@
-FROM node:18-slim
+FROM node:20-slim
 LABEL maintainer="formation-cimf@gmail.com"
 
 WORKDIR /app
 COPY package*.json ./
+COPY .env.prod .env
 RUN npm install
 COPY src ./src
 COPY tsconfig.json ./

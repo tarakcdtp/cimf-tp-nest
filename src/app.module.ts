@@ -10,6 +10,7 @@ import { transports } from 'winston';
 import { utilities as nestWinstonModuleUtilities, WinstonModule } from 'nest-winston';
 import * as DailyRotateFile from 'winston-daily-rotate-file';
 import { NotFoundExceptionFilter } from './exceptions/notfound-filter.exception';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 const transportsConfig: winston.transport[] = [
   new DailyRotateFile({
@@ -64,15 +65,20 @@ export const winstonConfig: winston.LoggerOptions = {
     UserModule, 
     CarModule,
     WinstonModule.forRoot(winstonConfig),
-    TypeOrmModule.forRoot({
+    ConfigModule.forRoot({ isGlobal: true }),
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
       type: 'postgres',
-      host: 'localhost',
-      port: 5432,
-      username: 'root',
-      password: '08863180',
-      database: 'cimf_db_1',
+      host: configService.get('DB_HOST'),
+      port: configService.get<number>('DB_PORT'),
+      username: configService.get('DB_USERNAME'),
+      password: configService.get('DB_PASSWORD'),
+      database: configService.get('DB_NAME'),
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true, 
+    }),
+      inject: [ConfigService],
     }),
     AuthModule,
   ],
