@@ -8,9 +8,16 @@ import { Roles } from '../auth/roles.decorator';
 export class UserController {
    
   @Roles('admin')
-  @Get()
-  getProfile(@Req() request) {
+  @Get('admin')
+  getProfileAdmin(@Req() request) {
     console.log(request.user);
+    return { message: `Accès autorisé à l’utilisateur authentifié : ${request.user.email}` };
+  }
+
+  @Roles('user')
+  @Get('user')
+  getProfileUser(@Req() request) {
+    console.log(request.test.test);//
     return { message: `Accès autorisé à l’utilisateur authentifié : ${request.user.email}` };
   }
 }

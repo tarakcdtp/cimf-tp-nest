@@ -14,7 +14,7 @@ export class CustomForbiddenException extends ForbiddenException {
     return {
       statusCode: HttpStatus.FORBIDDEN,
       error: 'Forbidden',
-      message: this.message,
+      message: this.message || 'Message par défaut',
       errorCode: this.errorCode,  // code métier spécifique
       timestamp: new Date().toISOString(),
     };
