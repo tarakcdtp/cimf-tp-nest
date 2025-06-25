@@ -18,7 +18,7 @@ export class RolesGuard implements CanActivate {
     if (!user || !requiredRoles.includes(user.role)) {
       //throw new HttpException('Message d’erreur', HttpStatus.CREATED);
        //throw new ForbiddenException('Accès refusé');
-      //throw new CustomForbiddenException('STEP2Error', 40301);
+      throw new CustomForbiddenException('STEP2Error', 40301);
     }
 
     return true;
